@@ -1,24 +1,10 @@
-import pvporcupine
-import pvrhino
+import pvporcupine, pvrhino
 from pvrecorder import PvRecorder
-import sounddevice as sd
 from datetime import datetime
 from flask import Flask
 
 # create the Flask app
 app = Flask(__name__)
-
-def recordAudio(rate):
-    fs = rate
-    duration = 5  # seconds
-    myrecording = sd.rec(duration * fs, samplerate=fs, channels=1, dtype='float64')
-    print("Recording Audio")
-    sd.wait()
-    print("Audio recording complete , Play Audio")
-    sd.play(myrecording, fs)
-    sd.wait()
-    print("Play Audio Complete")
-    return myrecording
 
 @app.route('/detect-word', methods=['GET'])
 def detectWakeUpWord():
@@ -39,11 +25,15 @@ def detectWakeUpWord():
 
         t1 = datetime.now()
         while (datetime.now()-t1).seconds <= 1:
-            pcm = recorder.read()
-            result = porcupine.process(pcm)
-            if result >= 0:
-                answer = "true"
-                print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
+            if answer == "false":
+                pcm = recorder.read()
+                result = porcupine.process(pcm)
+                if result >= 0:
+                    answer = "true"
+                    print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
+            else:
+                break
+        print((datetime.now()-t1).seconds)
     except KeyboardInterrupt:
         print('Stopping ...')
     finally:
@@ -77,7 +67,7 @@ def detectCommand():
         print()
 
         t1 = datetime.now()
-        while (datetime.now() - t1).seconds <= 6:
+        while True:
             pcm = recorder.read()
 
             is_finalized = rhino.process(pcm)
@@ -87,6 +77,7 @@ def detectCommand():
                     answer_intent = inference.intent
                     for slot, value in inference.slots.items():
                         answer_slot = answer_slot + " " + value
+                    break
 
     except KeyboardInterrupt:
         print('Stopping ...')
@@ -101,5 +92,5 @@ def detectCommand():
     return {'answer_intent':answer_intent, 'answer-slot':answer_slot}
 
 if __name__ == '__main__':
-    # run app in debug mode on port 5000
-    app.run(debug=True, port=5001)
+    # run app in debug mode on port 5001
+    app.run(debug=True, port=5002)
