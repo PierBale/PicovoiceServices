@@ -23,8 +23,7 @@ def detectWakeUpWord():
 
         print('Listening {')
 
-        t1 = datetime.now()
-        while (datetime.now()-t1).seconds <= 1:
+        while True:
             if answer == "false":
                 pcm = recorder.read()
                 result = porcupine.process(pcm)
@@ -33,7 +32,6 @@ def detectWakeUpWord():
                     print('[%s] Detected %s' % (str(datetime.now()), keywords[result]))
             else:
                 break
-        print((datetime.now()-t1).seconds)
     except KeyboardInterrupt:
         print('Stopping ...')
     finally:
