@@ -1,4 +1,5 @@
-import pvporcupine, pvrhino
+import pvporcupine
+import pvrhino
 from pvrecorder import PvRecorder
 from datetime import datetime
 from flask import Flask
@@ -8,15 +9,15 @@ app = Flask(__name__)
 
 @app.route('/detect-word', methods=['GET'])
 def detectWakeUpWord():
-    access_key = "HcTsHA/u+gcelwsLYGu/+GuxyEMmKyptCtykh+7oxDCKmK6me8jIyg=="
-    keywords = ['stop please']
+    access_key = "ATTy/mq5rE0mATss7Zs6CMoxWVr1qHHZckyBtnjLORzPYqd3obccCA=="
+    keywords = ['hey stop']
     porcupine = None
     recorder = None
     answer = "false"
     try:
         porcupine = pvporcupine.create(
             access_key=access_key,
-            keyword_paths=['/Users/pierbale/Documents/Github/WakeUpWordService/stop_please_mac_v2.0.0/stop-please_en_mac_v2_0_0.ppn'])
+            keyword_paths=['/Users/pierbale/Documents/Github/WakeUpWordService/hey_stop_mac_v2.1.0/hey-stop_en_mac_v2_1_0.ppn'])
 
         recorder = PvRecorder(device_index=-1, frame_length=porcupine.frame_length)
         recorder.start()
@@ -45,7 +46,7 @@ def detectWakeUpWord():
 
 @app.route('/detect-command', methods=['GET'])
 def detectCommand():
-    access_key = "HcTsHA/u+gcelwsLYGu/+GuxyEMmKyptCtykh+7oxDCKmK6me8jIyg=="
+    access_key = "ATTy/mq5rE0mATss7Zs6CMoxWVr1qHHZckyBtnjLORzPYqd3obccCA=="
 
     rhino = None
     recorder = None
@@ -54,8 +55,8 @@ def detectCommand():
 
     try:
         rhino = pvrhino.create(
-            access_key= access_key,
-            context_path='/Users/pierbale/Documents/Github/WakeUpWordService/dectectioncommand_mac_v2.0.0/DectectionCommand_en_mac_v2_0_0.rhn')
+            access_key=access_key,
+            context_path='/Users/pierbale/Documents/Github/WakeUpWordService/detection_command_mac_v2.1.0/Detection-Command_en_mac_v2_1_0.rhn')
 
         recorder = PvRecorder(device_index=-1, frame_length=rhino.frame_length)
         recorder.start()
