@@ -1,7 +1,8 @@
 import pvporcupine
 import pvrhino
-from pvrecorder import PvRecorder
+import time
 from datetime import datetime
+from pvrecorder import PvRecorder
 from flask import Flask
 
 # create the Flask app
@@ -19,7 +20,7 @@ def detectWakeUpWord():
             access_key=access_key,
             keyword_paths=['/Users/pierbale/Documents/Github/WakeUpWordService/hey_stop_mac_v2.1.0/hey-stop_en_mac_v2_1_0.ppn'])
 
-        recorder = PvRecorder(device_index=-1, frame_length=porcupine.frame_length)
+        recorder = PvRecorder(device_index=0, frame_length=porcupine.frame_length)
         recorder.start()
 
         print('Listening {')
@@ -56,7 +57,7 @@ def detectCommand():
     try:
         rhino = pvrhino.create(
             access_key=access_key,
-            context_path='/Users/pierbale/Documents/Github/WakeUpWordService/detection_command_mac_v2.1.0/Detection-Command_en_mac_v2_1_0.rhn')
+            context_path='/Users/pierbale/Documents/Github/WakeUpWordService/detection_command/detection_command_easy-ibm-smart-2/Detection-Command_en_mac_v2_1_0.rhn')
 
         recorder = PvRecorder(device_index=-1, frame_length=rhino.frame_length)
         recorder.start()
@@ -65,8 +66,8 @@ def detectCommand():
         print("Listening...")
         print()
 
-        t1 = datetime.now()
-        while True:
+        t_end = time.time() + 50
+        while time.time() < t_end:
             pcm = recorder.read()
 
             is_finalized = rhino.process(pcm)
@@ -91,5 +92,5 @@ def detectCommand():
     return {'answer_intent':answer_intent, 'answer-slot':answer_slot}
 
 if __name__ == '__main__':
-    # run app in debug mode on port 5001
+    # run app in debug mode on port 5002
     app.run(debug=True, port=5002)
